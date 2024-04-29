@@ -1,0 +1,42 @@
+#!/bin/sh -l
+# FILENAME:  myjobsubmissionfile
+
+#SBATCH -A pbermel
+#SBATCH --nodes=1
+#SBATCH --ntasks=10
+#SBATCH --time=1:00:00
+#SBATCH --job-name myjobname
+
+# Print the hostname of the compute node on which this job is running.
+/bin/hostname
+
+
+
+# Change to the directory from which you originally submitted this job.
+cd $SLURM_SUBMIT_DIR
+
+#mkdir $SLURM_JOBID
+#cd ./$SLURM_JOBID
+
+
+mpirun -np 4 meep pic-2023-acsphoton-2d.ctl | tee pic-2023-acsphoton-2d.out
+
+h5topng pic-2023-acsphoton-2d-eps-000000.00.h5
+
+h5topng -t 0:400 -R -Zc dkbluered -a yarg -A pic-2023-acsphoton-2d-eps-000000.00.h5 pic-2023-acsphoton-2d-ex.h5
+convert pic-2023-acsphoton-2d-ex.t*.png ex.gif
+rm pic-2023-acsphoton-2d-ex.t*.png
+
+h5topng -t 0:400 -R -Zc dkbluered -a yarg -A pic-2023-acsphoton-2d-eps-000000.00.h5 pic-2023-acsphoton-2d-ey.h5
+convert pic-2023-acsphoton-2d-ey.t*.png ey.gif
+rm pic-2023-acsphoton-2d-ey.t*.png
+
+h5topng -t 0:400 -R -Zc dkbluered -a yarg -A pic-2023-acsphoton-2d-eps-000000.00.h5 pic-2023-acsphoton-2d-ez.h5
+convert pic-2023-acsphoton-2d-ez.t*.png ez.gif
+rm pic-2023-acsphoton-2d-ez.t*.png
+
+h5topng -t 0:400 -R -Zc dkbluered -a yarg -A pic-2023-acsphoton-2d-eps-000000.00.h5 pic-2023-acsphoton-2d-dpwr.h5
+convert pic-2023-acsphoton-2d-dpwr.t*.png dpwr.gif
+rm pic-2023-acsphoton-2d-dpwr.t*.png
+
+echo "Done"
